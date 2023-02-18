@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import static frc.robot.Constants.TeleopDriveConstants.DEADBAND;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -54,7 +57,7 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 m_robotDrive.arcadeDrive(
-                    -m_driverController.getLeftY(), -m_driverController.getRightX()),
+                    modifyAxis(-m_driverController.getLeftY()), modifyAxis(-m_driverController.getRightX())),
             m_robotDrive));
   }
 
@@ -85,7 +88,7 @@ public class RobotContainer {
                 DriveConstants.kvVoltSecondsPerMeter,
                 DriveConstants.kaVoltSecondsSquaredPerMeter),
             DriveConstants.kDriveKinematics,
-            10);
+            5);
 
     // Create config for trajectory
     TrajectoryConfig config =
@@ -132,4 +135,16 @@ public class RobotContainer {
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
   }
+
+    private static double modifyAxis(double value) {
+        // Deadband
+        value = MathUtil.applyDeadband(value, DEADBAND);
+
+        // Square the axis
+        value = Math.copySign(value * value, value);
+
+        return value;
+    }
+
 }
+
