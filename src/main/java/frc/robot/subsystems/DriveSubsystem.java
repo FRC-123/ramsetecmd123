@@ -21,7 +21,10 @@ import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
-  // The motors on the left side of the drive.
+  // Constants
+  private final static int SMART_CURRENT_LIMIT = 40;
+  private final static double NOMINAL_DRIVE_VOLTAGE = 11.0;   // for voltage compensation
+
   private final CANSparkMax leftDrive = new CANSparkMax(DriveConstants.kLeftMotor1Port, MotorType.kBrushless);
   private final CANSparkMax leftDrivefollow = new CANSparkMax(DriveConstants.kLeftMotor2Port, MotorType.kBrushless);
   private final CANSparkMax rightDrive = new CANSparkMax(DriveConstants.kRightMotor1Port, MotorType.kBrushless);
@@ -64,16 +67,16 @@ public class DriveSubsystem extends SubsystemBase {
     leftDrivefollow.setInverted(false);
     rightDrivefollow.setInverted(false);
 
-    rightDrive.enableVoltageCompensation(12);
-    leftDrive.enableVoltageCompensation(12);
-    rightDrivefollow.enableVoltageCompensation(12);
-    leftDrivefollow.enableVoltageCompensation(12);
+    rightDrive.enableVoltageCompensation(NOMINAL_DRIVE_VOLTAGE);
+    leftDrive.enableVoltageCompensation(NOMINAL_DRIVE_VOLTAGE);
+    rightDrivefollow.enableVoltageCompensation(NOMINAL_DRIVE_VOLTAGE);
+    leftDrivefollow.enableVoltageCompensation(NOMINAL_DRIVE_VOLTAGE);
 
     // reasonable value for testing
-    leftDrive.setSmartCurrentLimit(40);
-    rightDrive.setSmartCurrentLimit(40);
-    leftDrivefollow.setSmartCurrentLimit(40);
-    rightDrivefollow.setSmartCurrentLimit(40);
+    leftDrive.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+    rightDrive.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+    leftDrivefollow.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+    rightDrivefollow.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
 
     leftDrive.setIdleMode(IdleMode.kCoast);
     rightDrive.setIdleMode(IdleMode.kCoast);
